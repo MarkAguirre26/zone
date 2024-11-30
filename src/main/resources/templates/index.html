@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body class="bg-gray-100 flex flex-col justify-center items-center h-screen p-2 m-0">
+
+
+
+
+
+<!-- Table Above the Buttons -->
+<div class="w-full bg-white shadow-md rounded-lg p-2 mb-2">
+
+
+    <div class="flex items-center justify-between p-2 w-full mx-auto bg-gray-100">
+        <div class="flex items-center"> <!-- This will remain on the left -->
+            <label for="draftNumber" class="font-semibold mr-2 text-xs text-gray-700">Draft</label>
+            <input type="text" id="draftNumber"
+                   class="border border-gray-300 rounded p-2 w-24 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   value="8">
+        </div>
+
+        <div class="flex items-center"> <!-- This will move to the right -->
+            <label for="captureNumber" class="font-semibold mr-2 text-xs text-gray-700">Capture</label>
+            <input type="text" id="captureNumber"
+                   class="border border-gray-300 rounded p-2 w-24 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   value="8">
+        </div>
+    </div>
+
+
+    <table class="w-full text-left text-xs border-collapse">
+        <thead>
+        <tr>
+            <th class="px-2 py-1 bg-green-100 border border-green-300">Zone Name</th>
+            <th class="px-2 py-1 bg-green-100 border border-green-300">Percentage</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="px-2 py-1 border border-gray-300">SHENRO777</td>
+            <td id="shenro" class="px-2 py-1 border border-gray-300 text-red-600">0</td>
+        </tr>
+        <tr>
+            <td class="px-2 py-1 border border-gray-300">LUCKY888</td>
+            <td id="lucky" class="px-2 py-1 border border-gray-300 text-red-600">0</td>
+        </tr>
+        <tr>
+            <td class="px-2 py-1 border border-gray-300">CLOUD999</td>
+            <td id="cloud" class="px-2 py-1 border border-gray-300 text-red-600">0</td>
+        </tr>
+        <tr>
+            <td class="px-2 py-1 border border-gray-300">SSS777</td>
+            <td id="sss" class="px-2 py-1 border border-gray-300 text-red-600">0</td>
+        </tr>
+        <tr>
+            <td class="px-2 py-1 border border-gray-300">EVERYTHING UNDER THE SUN</td>
+            <td id="everythingUnderTheSun" class="px-2 py-1 border border-gray-300 text-red-600"></td>
+        </tr>
+        <tr>
+            <td class="px-2 py-1 border border-gray-300">BLUESKY</td>
+            <td id="bluesky" class="px-2 py-1 border border-gray-300 text-red-600">0</td>
+        </tr>
+        <tr>
+            <td class="px-2 py-1 border border-gray-300">REDSEA</td>
+            <td id="redsea" class="px-2 py-1 border border-gray-300 text-red-600">0</td>
+        </tr>
+        <tr>
+            <td class="px-2 py-1 border border-gray-300">EVEN</td>
+            <td id="even" class="px-2 py-1 border border-gray-300 text-red-600">0</td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+
+
+
+
+<!-- Buttons Below the Table -->
+<div id="button-collections" class="space-y-1 mb-4 w-full"> <!-- Added max-w-xs to limit width -->
+
+    <div class="flex flex-wrap justify-center space-x-1"> <!-- Reduced space between items -->
+        <div class="w-full max-w-xs flex justify-center space-x-1 mb-2"> <!-- Reduced space between buttons -->
+            <button id="btn-reset"
+                    onclick="getDefaultData()"
+                    class="w-24 h-10 bg-blue-600 text-white rounded hover:bg-blue-700 active:bg-blue-700">Reset</button>
+            <button id="btn-execute"
+                    onclick="executeClicked()"
+                    class="w-24 h-10 bg-green-600 text-white rounded hover:bg-green-700 active:bg-green-700">Execute</button>
+            <button id="btn-w"
+                    onclick="winLoseClicked('w')"
+                    class="w-24 h-10 bg-yellow-600 text-white rounded hover:bg-yellow-700 active:bg-yellow-700">W</button>
+            <button id="btn-l"
+                    onclick="winLoseClicked('l')"
+                    class="w-24 h-10 bg-red-600 text-white rounded hover:bg-red-700 active:bg-red-700">L</button>
+        </div>
+    </div>
+
+
+    <!-- Row 1 -->
+    <div class="flex flex-wrap justify-center space-x-1">
+        <div class="flex space-x-1 mb-1">
+            <button id="btn-1-n"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">A-</button>
+            <button id="btn-2-n"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">2-</button>
+            <button id="btn-3-n"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">3-</button>
+            <button id="btn-4-n"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">4-</button>
+            <button id="btn-5-n"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">5-</button>
+            <button id="btn-6-n"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">6-</button>
+            <button id="btn-7-n"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">7-</button>
+        </div>
+        <div class="flex space-x-1">
+            <button id="btn-8-n"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">8-</button>
+            <button id="btn-9-n"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">9-</button>
+            <button id="btn-10-n"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">T-</button>
+            <button id="btn-11-n"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">J-</button>
+            <button id="btn-12-n"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">Q-</button>
+            <button id="btn-13-n"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">K-</button>
+            <button id="btn-0-n"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">0</button>
+        </div>
+    </div>
+
+    <!-- Separator -->
+    <hr class="my-4 border-t border-gray-300">
+
+    <!-- Row 2 -->
+    <div class="flex flex-wrap justify-center space-x-1">
+        <div class="flex space-x-1 mb-1">
+            <button id="btn-1"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">A</button>
+            <button id="btn-2"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">2</button>
+            <button id="btn-3"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">3</button>
+            <button id="btn-4"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">4</button>
+            <button id="btn-5"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">5</button>
+            <button id="btn-6"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">6</button>
+            <button id="btn-7"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">7</button>
+        </div>
+        <div class="flex space-x-1">
+            <button id="btn-8"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">8</button>
+            <button id="btn-9"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">9</button>
+            <button id="btn-10"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">T</button>
+            <button id="btn-11"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">J</button>
+            <button id="btn-12"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">Q</button>
+            <button id="btn-13"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">K</button>
+            <button id="btn-0"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">0</button>
+        </div>
+    </div>
+
+
+
+    <!-- Separator -->
+    <hr class="my-4 border-t border-gray-300" style="margin-top: 10px;margin-bottom: 10px;">
+
+    <!-- Row 3 (using div instead of button) -->
+    <div class="flex flex-wrap justify-center space-x-1">
+        <div class="flex space-x-1 mb-1">
+            <div id="div-1"
+                 class="w-12 h-12 border border-gray-300 flex justify-center items-center">32</div>
+            <div id="div-2"
+                 class="w-12 h-12 border border-gray-300 flex justify-center items-center">32</div>
+            <div id="div-3"
+                 class="w-12 h-12 border border-gray-300 flex justify-center items-center">32</div>
+            <div id="div-4"
+                 class="w-12 h-12 border border-gray-300 flex justify-center items-center">32</div>
+            <div id="div-5"
+                 class="w-12 h-12 border border-gray-300 flex justify-center items-center">32</div>
+            <div id="div-6"
+                 class="w-12 h-12 border border-gray-300 flex justify-center items-center">32</div>
+            <div id="div-7"
+                 class="w-12 h-12 border border-gray-300 flex justify-center items-center">32</div>
+        </div>
+        <div class="flex space-x-1">
+            <div id="div-8"
+                 class="w-12 h-12 border border-gray-300 flex justify-center items-center">32</div>
+            <div id="div-9"
+                 class="w-12 h-12 border border-gray-300 flex justify-center items-center">32</div>
+            <div id="div-10"
+                 class="w-12 h-12 border border-gray-300 flex justify-center items-center">32</div>
+            <div id="div-11"
+                 class="w-12 h-12 border border-gray-300 flex justify-center items-center">32</div>
+            <div id="div-12"
+                 class="w-12 h-12 border border-gray-300 flex justify-center items-center">32</div>
+            <div id="div-13"
+                 class="w-12 h-12 border border-gray-300 flex justify-center items-center">32</div>
+            <div id="div-14"
+                 class="w-12 h-12 border border-gray-300 flex justify-center items-center">128</div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script src="/main.js"></script>
+
+</body>
+
+
+</html>
