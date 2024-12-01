@@ -26,7 +26,12 @@ public class MainController {
 
     @GetMapping("/process-request")
     public ResponseEntity<List<String>> processEvent(@RequestParam String event, @RequestParam String draft) {
+
         try {
+            if(event.contains("P_Click")){
+                event = "Module1."+event;
+            }
+
            logger.info("Event: " + event);
             if (!event.equals("currentState")) {
               logger.info("Triggering macro"+event);
