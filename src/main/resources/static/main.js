@@ -9,164 +9,73 @@ $(document).ready(function () {
         button.addEventListener('click', (event) => {
             // console.log(`Button clicked: ${event.target.id}`);
             // Add additional logic here as needed
-            cardButtonClicked(event.target.id);
+            processEvent(event.target.id, $("#I7").val());
         });
     });
 
-    const draftNumber = $("#draftNumber");
-    let draftNumberValue = localStorage.getItem("draftNumber");
-    draftNumber.val(draftNumberValue);
+    processEvent("currentState", "");
 
 
-    const captureNumber = $("#captureNumber");
-    let captureNumberValue = localStorage.getItem("captureNumber");
-    captureNumber.val(captureNumberValue);
-    console.log(captureNumber);
-
-
-    getDefaultData();
-    clearDivsBackgroundColor();
 
 
 });
 
 
-function executeClicked() {
 
-
+function showLoadingDialog() {
+    document.getElementById("loading-dialog").classList.remove("hidden");
 }
 
-function clearDivsBackgroundColor() {
-    const parentDiv = document.querySelector('.flex.flex-wrap.justify-center.space-x-1');
-    const divsWithIdContainingDiv = Array.from(parentDiv.querySelectorAll('div[id*="div-"]'));
-
-    divsWithIdContainingDiv.forEach(div => {
-        div.addClass("bg-white");
-        div.removeClass("bg-green-100");
-    })
+// Function to hide the loading dialog
+function hideLoadingDialog() {
+    document.getElementById("loading-dialog").classList.add("hidden");
 }
 
-function winLoseClicked(e) {
-    const captureNumber = $("#captureNumber");
-
-    let captureNumberValue = captureNumber.val();
 
 
-    if (e === "w") {
-        captureNumberValue++;
-    } else if (e === "l") {
-        captureNumberValue--;
-    } else if (e === "reset") {
-        captureNumberValue = 0;
-    }
-
-    localStorage.setItem("captureNumber", captureNumberValue);
-    captureNumber.val(captureNumberValue);
-}
-
-function cardButtonClicked(cardButtonCardId) {
-    // Data to be sent in the AJAX request
-    if (cardButtonCardId.includes("reset") ||
-        cardButtonCardId.includes("execute") ||
-        cardButtonCardId.includes("btn-w") ||
-        cardButtonCardId.includes("btn-l")) {
-        return;
-    }
-
-// jQuery AJAX call
-    // Prepare data as an object
-    const dataParams = {
-        "div-1": $("#div-1").text(),
-        "div-2": $("#div-2").text(),
-        "div-3": $("#div-3").text(),
-        "div-4": $("#div-4").text(),
-        "div-5": $("#div-5").text(),
-        "div-6": $("#div-6").text(),
-        "div-7": $("#div-7").text(),
-        "div-8": $("#div-8").text(),
-        "div-9": $("#div-9").text(),
-        "div-10": $("#div-10").text(),
-        "div-11": $("#div-11").text(),
-        "div-12": $("#div-12").text(),
-        "div-13": $("#div-13").text(),
-        "cardId": cardButtonCardId
-    };
-
-// Make the AJAX POST call
+function processEvent(event, draft) {
+    showLoadingDialog();
     $.ajax({
-        url: '/api/cardClicked',  // Your endpoint URL
-        method: 'POST',  // Use POST method
-        // contentType: 'application/json',  // Specify that we're sending JSON data
-        data: dataParams,  // Convert the object to a JSON string
-        success: function (data) {
-            console.log('Success:', data);
-            for (let i = 0; i < data.length; i++) {
-                let id = data[i].id;
-                let content = data[i].content;
-                if (id.includes("div-")) {
-                    const div = $("#" + id);
-                    div.text(content);
-                    div.removeClass("bg-green-100");
-
-                }
-
-
-            }
-
-
-            const div = $("#" + cardButtonCardId.replace("btn", "div").replace("-n", ""));
-            div.addClass("bg-green-100");
-
-
-        },
-        error: function (xhr, status, error) {
-            console.error('Error:', status, error);
-        }
-    });
-
-
-}
-
-
-function getDefaultData() {
-    const draftNumber = $("#draftNumber");
-    localStorage.setItem("draftNumber", draftNumber.val());
-
-    $.ajax({
-        url: '/api/default',
+        url: '/api/process-request',
         method: 'GET',  // Use GET method
         data: {
-            draft: draftNumber.val()
+            event: event,
+            draft: draft
         },
         success: function (data) {
-            // console.log('Success:', data);
-            //divElement
-            let divElement = data.divElement;
-            for (let i = 0; i < divElement.length; i++) {
-                let id = divElement[i].id;
-                let content = divElement[i].content;
-                if (id.includes("div-")) {
-                    const div = $("#" + id);
-                    div.text(content);
-                    div.removeClass("bg-green-100");
+             // console.log('Success:', data);
 
-                }
-            }
-            //     zoneResponse
-            let zoneResponse = data.zoneResponse;
 
-            $("#shenro").text(zoneResponse.shenro);
-            $("#lucky").text(zoneResponse.lucky);
-            $("#cloud").text(zoneResponse.cloud);
-            $("#sss").text(zoneResponse.sss);
-            $("#everythingUnderTheSun").text(zoneResponse.everythingUnderTheSun);
-            $("#bluesky").text(zoneResponse.bluesky);
-            $("#redsea").text(zoneResponse.redsea);
-            $("#even").text(zoneResponse.even);
-            draftNumber.val(zoneResponse.draftNumber);
+            $("#C11").text(Math.trunc(data[0]) || ""); // data[0] corresponds to C11
+            $("#D11").text(Math.trunc(data[1]) || ""); // data[1] corresponds to D11
+            $("#E11").text(Math.trunc(data[2]) || ""); // data[2] corresponds to E11
+            $("#F11").text(Math.trunc(data[3]) || ""); // data[3] corresponds to F11
+            $("#G11").text(Math.trunc(data[4]) || ""); // data[4] corresponds to G11
+            $("#H11").text(Math.trunc(data[5]) || ""); // data[5] corresponds to H11
+            $("#I11").text(Math.trunc(data[6]) || ""); // data[6] corresponds to I11
+            $("#J11").text(Math.trunc(data[7]) || ""); // data[7] corresponds to J11
+            $("#K11").text(Math.trunc(data[8]) || ""); // data[8] corresponds to K11
+            $("#L11").text(Math.trunc(data[9]) || ""); // data[9] corresponds to L11
+            $("#M11").text(Math.trunc(data[10]) || ""); // data[10] corresponds to M11
+            $("#N11").text(Math.trunc(data[11]) || ""); // data[11] corresponds to N11
+            $("#O11").text(Math.trunc(data[12]) || ""); // data[12] corresponds to O11
+            $("#P11").text(Math.trunc(data[13]) || ""); // data[13] corresponds to P11
+            // $("#L18").val(data[14] || ""); // data[14] corresponds to L18
+            // $("#M18").val(data[15] || ""); // data[15] corresponds to M18
+            $("#wandL").text(Math.trunc(data[14]) +"/"+Math.trunc(data[15]) );
 
-             // winLoseClicked("reset");
-
+            $("#L22").val(Math.trunc(data[16]) || ""); // data[16] corresponds to L22
+            $("#I7").val(Math.trunc(data[17]) || "");
+            $("#I18").text(data[18] || ""); // data[17] corresponds to I18
+            $("#I19").text(data[19] || ""); // data[18] corresponds to I19
+            $("#I20").text(data[20] || ""); // data[19] corresponds to I20
+            $("#I21").text(data[21] || ""); // data[20] corresponds to I21
+            $("#I22").text(data[22] || ""); // data[21] corresponds to I22
+            $("#I23").text(data[23] || ""); // data[22] corresponds to I23
+            $("#I24").text(data[24] || ""); // data[23] corresponds to I24
+            $("#I25").text(data[25] || ""); // data[24] corresponds to I25
+            // $("#I7").text(Math.trunc(data[25]) || ""); // data[13] corresponds to I7
+            hideLoadingDialog();
         },
         error: function (xhr, status, error) {
             console.error('Error:', status, error);
