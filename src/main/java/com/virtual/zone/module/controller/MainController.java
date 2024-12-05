@@ -29,6 +29,7 @@ public class MainController {
 
     @GetMapping("/process-request")
     public ResponseEntity<List<String>> processEvent(@RequestParam String event, @RequestParam String draft) {
+
         List<String> zoneData = new ArrayList<>();
 
         try {
@@ -39,18 +40,21 @@ public class MainController {
             logger.info("Event: " + event);
             if (!event.equals("currentState")) {
                 logger.info("Triggering macro" + event);
-                zoneHelper.triggerMacro(event);
+                zoneData = new ArrayList<>(zoneHelper.triggerMacro(event));
+            } else {
+                logger.info("GET Current State" + event);
+                zoneData = new ArrayList<>(zoneHelper.getMacroData());
             }
+
             if (event.equals("Reset_Shoe")) {
                 //TO DO WRITE
                 logger.info("Draft: " + draft);
                 logger.info("Reset Shoe");
                 zoneHelper.writeMacro(draft);
                 logger.info("Triggering macro" + event);
-                zoneHelper.triggerMacro(event);
-            }
+                zoneData = new ArrayList<>(zoneHelper.triggerMacro(event));
 
-            zoneData = zoneHelper.getMacroData();
+            }
 
 
             return ResponseEntity.ok(zoneData);

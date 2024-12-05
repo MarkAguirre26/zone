@@ -57,7 +57,6 @@ public class ZoneHelper {
             zoneData.addAll(multiplyCellValuesBy100(sheet, zoneCells));
 
             // Close the workbook without saving
-            Dispatch.call(workbook, "Save");
             Dispatch.call(workbook, "Close", false);
 
         } catch (Exception e) {
@@ -112,9 +111,7 @@ public class ZoneHelper {
             zoneData.addAll(multiplyCellValuesBy100(sheet, zoneCells));
 
             // Close the workbook without saving
-            // Save and close the workbook
-            Dispatch.call(isCurrentState ? workbook : workbookFrom, "Save");
-            Dispatch.call(isCurrentState ? workbook : workbookFrom, "Close", false);
+//            Dispatch.call(isCurrentState ? workbook : workbookFrom, "Close", false);
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error interacting with Excel", e);
@@ -161,12 +158,12 @@ public class ZoneHelper {
     }
 
 
-    public void triggerMacro(String macroName) {
+    public List<String> triggerMacro(String macroName) {
         if (!isValidFilePath(EXCEL_FILE_PATH)) {
             LOGGER.severe("Excel file not found: " + EXCEL_FILE_PATH);
-            return;
+            return null;
         }
-
+        List<String> zoneData = new ArrayList<>();
 
         ActiveXComponent excelApp = null;
         Dispatch workbook = null;
@@ -183,14 +180,19 @@ public class ZoneHelper {
             // Run the specified macro
             Dispatch.call(excelApp, "Run", macroName);
 
-//            macroData.addAll(getCurrentStateMacroData(false, workbook));
+
             // Save and close the workbook
             Dispatch.call(workbook, "Save");
+
+            zoneData.addAll(getCurrentStateMacroData(false, workbook));
+
+
             Dispatch.call(workbook, "Close", false);
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error running macro", e);
         }
+        return zoneData;
 
     }
 
