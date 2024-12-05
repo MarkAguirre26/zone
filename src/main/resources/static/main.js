@@ -44,7 +44,7 @@ function processEvent(event, draft) {
         },
         success: function (data) {
              // console.log('Success:', data);
-
+            hideLoadingDialog();
 
             $("#C11").text(Math.trunc(data[0]) || ""); // data[0] corresponds to C11
             $("#D11").text(Math.trunc(data[1]) || ""); // data[1] corresponds to D11
@@ -75,7 +75,7 @@ function processEvent(event, draft) {
             $("#I24").text(data[24] || ""); // data[23] corresponds to I24
             $("#I25").text(data[25] || ""); // data[24] corresponds to I25
             // $("#I7").text(Math.trunc(data[25]) || ""); // data[13] corresponds to I7
-            hideLoadingDialog();
+
         },
         error: function (xhr, status, error) {
             console.error('Error:', status, error);

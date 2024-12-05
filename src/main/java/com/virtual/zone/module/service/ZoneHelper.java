@@ -22,7 +22,7 @@ public class ZoneHelper {
     private static final String EXCEL_FILE_PATH = APP_ROOT + EXCEL_FILE_NAME;
 
     // Public Methods
-    public List<String> getMacroData() {
+    public List<String> getMacroData(Dispatch workbook) {
         List<String> zoneData = new ArrayList<>();
         if (!isValidFilePath(EXCEL_FILE_PATH)) {
             LOGGER.severe("Excel file not found: " + EXCEL_FILE_PATH);
@@ -30,8 +30,48 @@ public class ZoneHelper {
         }
 
         String[] cellAddresses = {
-                "C11", "D11", "E11", "F11", "G11", "H11", "I11","J11", "K11", "L11",
-                "M11", "N11", "O11", "P11", "L18", "M18", "L22","I7"
+                "C11", "D11", "E11", "F11", "G11", "H11", "I11", "J11", "K11", "L11",
+                "M11", "N11", "O11", "P11", "L18", "M18", "L22", "I7"
+        };
+
+        String[] zoneCells = {
+                "I18", "I19", "I20", "I21", "I22", "I23", "I24", "I25"
+        };
+
+//        ActiveXComponent excelApp = null;
+        try {
+//            excelApp = startExcelApp();
+//            Dispatch workbook = openWorkbook(excelApp);
+
+            // Get the first worksheet (index starts at 1 in Excel)
+            Dispatch sheets = Dispatch.get(workbook, "Sheets").toDispatch();
+            Dispatch sheet = Dispatch.call(sheets, "Item", 1).toDispatch();
+
+
+            // Process general cells and zone cells
+            zoneData.addAll(processCellValues(sheet, cellAddresses));
+
+            zoneData.addAll(multiplyCellValuesBy100(sheet, zoneCells));
+
+            // Close the workbook without saving
+//            closeWorkbook(excelApp);
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error interacting with Excel", e);
+        }
+        return zoneData;
+    }
+
+    public List<String> getCurrentStateMacroData() {
+        List<String> zoneData = new ArrayList<>();
+        if (!isValidFilePath(EXCEL_FILE_PATH)) {
+            LOGGER.severe("Excel file not found: " + EXCEL_FILE_PATH);
+            throw new RuntimeException("Excel file not found: " + EXCEL_FILE_PATH);
+        }
+
+        String[] cellAddresses = {
+                "C11", "D11", "E11", "F11", "G11", "H11", "I11", "J11", "K11", "L11",
+                "M11", "N11", "O11", "P11", "L18", "M18", "L22", "I7"
         };
 
         String[] zoneCells = {
@@ -58,14 +98,15 @@ public class ZoneHelper {
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error interacting with Excel", e);
-        } finally {
-            quitExcelApp(excelApp);
         }
         return zoneData;
     }
 
 
-    public  void writeMacro(String macroValue) {
+
+
+
+    public void writeMacro(String macroValue) {
         if (!isValidFilePath(EXCEL_FILE_PATH)) {
             LOGGER.severe("Excel file not found: " + EXCEL_FILE_PATH);
             return;
@@ -74,7 +115,7 @@ public class ZoneHelper {
         ActiveXComponent excelApp = null;
         try {
             excelApp = startExcelApp();
-            Dispatch workbook  = openWorkbook(excelApp);
+            Dispatch workbook = openWorkbook(excelApp);
 
             // Access the first worksheet
             Dispatch sheets = Dispatch.get(workbook, "Sheets").toDispatch();
@@ -95,21 +136,24 @@ public class ZoneHelper {
         }
     }
 
-    public  void triggerMacro(String macroName) {
+    public List<String> triggerMacro(String macroName) {
         if (!isValidFilePath(EXCEL_FILE_PATH)) {
             LOGGER.severe("Excel file not found: " + EXCEL_FILE_PATH);
-            return;
+            return null;
         }
+
+        List<String> macroData = new ArrayList<>();
 
         ActiveXComponent excelApp = null;
         try {
             excelApp = startExcelApp();
-            Dispatch workbook  = openWorkbook(excelApp);
+            Dispatch workbook = openWorkbook(excelApp);
 
             // Run the specified macro
             Dispatch.call(excelApp, "Run", macroName);
 
-            // Save and close the workbook
+            macroData = getMacroData(workbook);
+
             // Save and close the workbook
             Dispatch.call(workbook, "Save");
             Dispatch.call(workbook, "Close", false);
@@ -119,6 +163,7 @@ public class ZoneHelper {
         } finally {
             quitExcelApp(excelApp);
         }
+        return macroData;
     }
 
     // Private Helper Methods
