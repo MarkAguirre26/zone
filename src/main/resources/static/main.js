@@ -10,16 +10,14 @@ $(document).ready(function () {
             // console.log(`Button clicked: ${event.target.id}`);
             // Add additional logic here as needed
             processEvent(event.target.id, $("#I7").val());
+
         });
     });
 
     processEvent("currentState", "");
 
 
-
-
 });
-
 
 
 function showLoadingDialog() {
@@ -32,8 +30,13 @@ function hideLoadingDialog() {
 }
 
 
-
 function processEvent(event, draft) {
+
+    if (event === "ButtonZeroN" || event === "ButtonZeroP") {
+        return;
+    }
+
+
     showLoadingDialog();
     $.ajax({
         url: '/api/process-request',
@@ -43,7 +46,7 @@ function processEvent(event, draft) {
             draft: draft
         },
         success: function (data) {
-             // console.log('Success:', data);
+            // console.log('Success:', data);
             hideLoadingDialog();
 
             $("#C11").text(Math.trunc(data[0]) || ""); // data[0] corresponds to C11
@@ -62,9 +65,9 @@ function processEvent(event, draft) {
             $("#P11").text(Math.trunc(data[13]) || ""); // data[13] corresponds to P11
             // $("#L18").val(data[14] || ""); // data[14] corresponds to L18
             // $("#M18").val(data[15] || ""); // data[15] corresponds to M18
-            $("#wandL").text(Math.trunc(data[14]) +"/"+Math.trunc(data[15]) );
+            $("#wandL").text(Math.trunc(data[14]) + "/" + Math.trunc(data[15]));
 
-            $("#L22").val(Math.trunc(data[16]) || ""); // data[16] corresponds to L22
+            // $("#L22").val(Math.trunc(data[16]) || ""); // data[16] corresponds to L22
             $("#I7").val(Math.trunc(data[17]) || "");
             $("#I18").text(data[18] || ""); // data[17] corresponds to I18
             $("#I19").text(data[19] || ""); // data[18] corresponds to I19

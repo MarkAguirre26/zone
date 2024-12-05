@@ -8,9 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Slf4j
@@ -36,7 +39,7 @@ public class MainController {
             logger.info("Event: " + event);
             if (!event.equals("currentState")) {
                 logger.info("Triggering macro" + event);
-                zoneData = zoneHelper.triggerMacro(event);
+                zoneHelper.triggerMacro(event);
             }
             if (event.equals("Reset_Shoe")) {
                 //TO DO WRITE
@@ -44,11 +47,11 @@ public class MainController {
                 logger.info("Reset Shoe");
                 zoneHelper.writeMacro(draft);
                 logger.info("Triggering macro" + event);
-                zoneData = zoneHelper.triggerMacro(event);
+                zoneHelper.triggerMacro(event);
             }
-            if (event.equals("currentState")) {
-                zoneData = zoneHelper.getCurrentStateMacroData();
-            }
+
+            zoneData = zoneHelper.getMacroData();
+
 
             return ResponseEntity.ok(zoneData);
         } catch (Exception e) {
@@ -57,12 +60,14 @@ public class MainController {
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
+        } finally {
+            killExcelProcess();
         }
 
     }
 
 
-//    @PostMapping("/cardClicked")
+    //    @PostMapping("/cardClicked")
 //    public ResponseEntity<List<DivElement>> cardClicked(@RequestParam Map<String, String> param) {
 //        try {
 //
@@ -80,6 +85,24 @@ public class MainController {
 //                    .build();
 //        }
 //    }
+    private void killExcelProcess() {
+        try {
+            String line;
+            Process process = Runtime.getRuntime().exec("tasklist");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("EXCEL.EXE")) {
+                    // Kill the Excel process
+                    Runtime.getRuntime().exec("taskkill /F /IM EXCEL.EXE");
+                    logger.info("Excel process terminated.");
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Failed to terminate Excel process", e);
+        }
+    }
 
 
 }

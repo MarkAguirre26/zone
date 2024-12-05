@@ -5,6 +5,9 @@ import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,47 +25,7 @@ public class ZoneHelper {
     private static final String EXCEL_FILE_PATH = APP_ROOT + EXCEL_FILE_NAME;
 
     // Public Methods
-    public List<String> getMacroData(Dispatch workbook) {
-        List<String> zoneData = new ArrayList<>();
-        if (!isValidFilePath(EXCEL_FILE_PATH)) {
-            LOGGER.severe("Excel file not found: " + EXCEL_FILE_PATH);
-            throw new RuntimeException("Excel file not found: " + EXCEL_FILE_PATH);
-        }
-
-        String[] cellAddresses = {
-                "C11", "D11", "E11", "F11", "G11", "H11", "I11", "J11", "K11", "L11",
-                "M11", "N11", "O11", "P11", "L18", "M18", "L22", "I7"
-        };
-
-        String[] zoneCells = {
-                "I18", "I19", "I20", "I21", "I22", "I23", "I24", "I25"
-        };
-
-//        ActiveXComponent excelApp = null;
-        try {
-//            excelApp = startExcelApp();
-//            Dispatch workbook = openWorkbook(excelApp);
-
-            // Get the first worksheet (index starts at 1 in Excel)
-            Dispatch sheets = Dispatch.get(workbook, "Sheets").toDispatch();
-            Dispatch sheet = Dispatch.call(sheets, "Item", 1).toDispatch();
-
-
-            // Process general cells and zone cells
-            zoneData.addAll(processCellValues(sheet, cellAddresses));
-
-            zoneData.addAll(multiplyCellValuesBy100(sheet, zoneCells));
-
-            // Close the workbook without saving
-//            closeWorkbook(excelApp);
-
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error interacting with Excel", e);
-        }
-        return zoneData;
-    }
-
-    public List<String> getCurrentStateMacroData() {
+    public List<String> getMacroData() {
         List<String> zoneData = new ArrayList<>();
         if (!isValidFilePath(EXCEL_FILE_PATH)) {
             LOGGER.severe("Excel file not found: " + EXCEL_FILE_PATH);
@@ -94,7 +57,8 @@ public class ZoneHelper {
             zoneData.addAll(multiplyCellValuesBy100(sheet, zoneCells));
 
             // Close the workbook without saving
-            closeWorkbook(excelApp);
+            Dispatch.call(workbook, "Save");
+            Dispatch.call(workbook, "Close", false);
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error interacting with Excel", e);
@@ -102,8 +66,61 @@ public class ZoneHelper {
         return zoneData;
     }
 
+    public List<String> getCurrentStateMacroData(boolean isCurrentState, Dispatch workbookFrom) {
+        List<String> zoneData = new ArrayList<>();
+
+        if (isCurrentState) {
+
+            if (!isValidFilePath(EXCEL_FILE_PATH)) {
+                LOGGER.severe("Excel file not found: " + EXCEL_FILE_PATH);
+                throw new RuntimeException("Excel file not found: " + EXCEL_FILE_PATH);
+            }
+        }
+        String[] cellAddresses = {
+                "C11", "D11", "E11", "F11", "G11", "H11", "I11", "J11", "K11", "L11",
+                "M11", "N11", "O11", "P11", "L18", "M18", "L22", "I7"
+        };
+
+        String[] zoneCells = {
+                "I18", "I19", "I20", "I21", "I22", "I23", "I24", "I25"
+        };
+
+        Dispatch workbook = null;
+        ActiveXComponent excelApp = null;
+
+        if (isCurrentState) {
 
 
+            excelApp = startExcelApp();
+
+
+        }
+        try {
+
+            if (isCurrentState) {
+                workbook = openWorkbook(excelApp);
+            }
+
+            // Get the first worksheet (index starts at 1 in Excel)
+            Dispatch sheets = Dispatch.get(isCurrentState ? workbook : workbookFrom, "Sheets").toDispatch();
+            Dispatch sheet = Dispatch.call(sheets, "Item", 1).toDispatch();
+
+
+            // Process general cells and zone cells
+            zoneData.addAll(processCellValues(sheet, cellAddresses));
+
+            zoneData.addAll(multiplyCellValuesBy100(sheet, zoneCells));
+
+            // Close the workbook without saving
+            // Save and close the workbook
+            Dispatch.call(isCurrentState ? workbook : workbookFrom, "Save");
+            Dispatch.call(isCurrentState ? workbook : workbookFrom, "Close", false);
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error interacting with Excel", e);
+        }
+        return zoneData;
+    }
 
 
     public void writeMacro(String macroValue) {
@@ -113,17 +130,21 @@ public class ZoneHelper {
         }
 
         ActiveXComponent excelApp = null;
+        excelApp = startExcelApp();
+        Dispatch workbook = null;
         try {
-            excelApp = startExcelApp();
-            Dispatch workbook = openWorkbook(excelApp);
+
+            workbook = openWorkbook(excelApp);
 
             // Access the first worksheet
             Dispatch sheets = Dispatch.get(workbook, "Sheets").toDispatch();
             Dispatch sheet = Dispatch.call(sheets, "Item", new Variant(1)).toDispatch(); // Modify the index if needed
 
-            // Find the cell (e.g., I7) and set the value
-            Dispatch range = Dispatch.invoke(sheet, "Range", Dispatch.Get, new Object[]{"I7"}, new int[1]).toDispatch();
-            Dispatch.put(range, "Value", new Variant(macroValue)); // Write the value to the cell
+            // Set values in specified cells
+            setCellValue(sheet, "I7", macroValue);
+            setCellValue(sheet, "L18", "0");
+            setCellValue(sheet, "M18", "0");
+
 
             // Save and close the workbook
             Dispatch.call(workbook, "Save");
@@ -131,40 +152,50 @@ public class ZoneHelper {
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error running macro", e);
-        } finally {
-            quitExcelApp(excelApp);
         }
     }
 
-    public List<String> triggerMacro(String macroName) {
+    private void setCellValue(Dispatch sheet, String cellRef, Object value) {
+        Dispatch cell = Dispatch.invoke(sheet, "Range", Dispatch.Get, new Object[]{cellRef}, new int[1]).toDispatch();
+        Dispatch.put(cell, "Value", new Variant(value));
+    }
+
+
+    public void triggerMacro(String macroName) {
         if (!isValidFilePath(EXCEL_FILE_PATH)) {
             LOGGER.severe("Excel file not found: " + EXCEL_FILE_PATH);
-            return null;
+            return;
         }
 
-        List<String> macroData = new ArrayList<>();
 
         ActiveXComponent excelApp = null;
+        Dispatch workbook = null;
+
         try {
-            excelApp = startExcelApp();
-            Dispatch workbook = openWorkbook(excelApp);
+            // Start Excel application
+            excelApp = new ActiveXComponent("Excel.Application");
+            excelApp.setProperty("Visible", false); // Run in the background
+
+            // Open workbook
+            Dispatch workbooks = excelApp.getProperty("Workbooks").toDispatch();
+            workbook = Dispatch.call(workbooks, "Open", EXCEL_FILE_PATH).toDispatch();
 
             // Run the specified macro
             Dispatch.call(excelApp, "Run", macroName);
 
-            macroData = getMacroData(workbook);
-
+//            macroData.addAll(getCurrentStateMacroData(false, workbook));
             // Save and close the workbook
             Dispatch.call(workbook, "Save");
             Dispatch.call(workbook, "Close", false);
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error running macro", e);
-        } finally {
-            quitExcelApp(excelApp);
         }
-        return macroData;
+
     }
+
+    // Helper method to kill Excel processes
+
 
     // Private Helper Methods
     private boolean isValidFilePath(String filePath) {

@@ -32,13 +32,13 @@
                    value="0">
         </div>
 
-        <div class="flex items-center"> <!-- This will move to the right -->
-            <label for="L22" class="font-semibold mr-2 text-xs text-gray-700">Capture</label>
-            <input type="text" id="L22"
-                   class="border border-gray-300 rounded p-2 w-24 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   value="0"
-                   readonly>
-        </div>
+<!--        <div class="flex items-center"> &lt;!&ndash; This will move to the right &ndash;&gt;-->
+<!--            <label for="L22" class="font-semibold mr-2 text-xs text-gray-700">Capture</label>-->
+<!--            <input type="text" id="L22"-->
+<!--                   class="border border-gray-300 rounded p-2 w-24 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"-->
+<!--                   value="0"-->
+<!--                   readonly>-->
+<!--        </div>-->
 
         <!-- Additional input fields (centered or spaced) -->
 <!--        <div class="flex items-center space-x-2"> &lt;!&ndash; This will space the remaining inputs &ndash;&gt;-->
@@ -59,39 +59,39 @@
         <tbody>
         <tr>
             <td class="px-2 py-1 border border-gray-300">SHENRO777</td>
-            <td id="I18" class="px-2 py-1 border border-gray-300 text-red-600">0</td>
+            <td id="I18" class="px-2 py-1 border border-gray-300 text-black">0</td>
         </tr>
         <tr>
             <td class="px-2 py-1 border border-gray-300">LUCKY888</td>
-            <td id="I19" class="px-2 py-1 border border-gray-300 text-red-600">0</td>
+            <td id="I19" class="px-2 py-1 border border-gray-300 text-black">0</td>
         </tr>
         <tr>
             <td class="px-2 py-1 border border-gray-300">CLOUD999</td>
-            <td id="I20" class="px-2 py-1 border border-gray-300 text-red-600">0</td>
+            <td id="I20" class="px-2 py-1 border border-gray-300 text-black">0</td>
         </tr>
         <tr>
             <td class="px-2 py-1 border border-gray-300">SSS777</td>
-            <td id="I21" class="px-2 py-1 border border-gray-300 text-red-600">0</td>
+            <td id="I21" class="px-2 py-1 border border-gray-300 text-black">0</td>
         </tr>
         <tr>
             <td class="px-2 py-1 border border-gray-300">EVERYTHING UNDER THE SUN</td>
-            <td id="I22" class="px-2 py-1 border border-gray-300 text-red-600"></td>
+            <td id="I22" class="px-2 py-1 border border-gray-300 text-black"></td>
         </tr>
         <tr>
             <td class="px-2 py-1 border border-gray-300">BLUESKY</td>
-            <td id="I23" class="px-2 py-1 border border-gray-300 text-red-600">0</td>
+            <td id="I23" class="px-2 py-1 border border-gray-300 text-black">0</td>
         </tr>
         <tr>
             <td class="px-2 py-1 border border-gray-300">REDSEA</td>
-            <td id="I24" class="px-2 py-1 border border-gray-300 text-red-600">0</td>
+            <td id="I24" class="px-2 py-1 border border-gray-300 text-black">0</td>
         </tr>
         <tr>
             <td class="px-2 py-1 border border-gray-300">EVEN</td>
-            <td id="I25" class="px-2 py-1 border border-gray-300 text-red-600">0</td>
+            <td id="I25" class="px-2 py-1 border border-gray-300 text-black">0</td>
         </tr>
         <tr>
-            <td class="px-2 py-1 border border-gray-300">Win/Lose</td>
-            <td id="wandL" class="px-2 py-1 border border-gray-300 text-red-600">0/0</td>
+            <td class="px-2 py-1 border border-gray-300">Capture</td>
+            <td id="wandL" class="px-2 py-1 border border-gray-300 text-black">0/0</td>
         </tr>
 
         </tbody>
@@ -178,6 +178,8 @@
                 K-
             </button>
             <button
+                    disabled
+                    id="ButtonZeroN"
                     class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">
                 0
             </button>
@@ -245,7 +247,9 @@
                 K
             </button>
             <button
-                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300">
+                    disabled
+                    id="ButtonZeroP"
+                    class="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center hover:bg-gray-200 active:bg-gray-300 ">
                 0
             </button>
         </div>
